@@ -26,8 +26,8 @@ print('''
 ''')
 
 OPT = input('\n Enter Option : ')
-USERS_FILE = input('\n Enter Users File Name : ')
-USERS_PASS = input('\n Enter Users PASSWORD : ')
+USERS_FILE = 'u.txt' #input('\n Enter Users File Name : ')
+USERS_PASS = 'password_hereUwU' #input('\n Enter Users PASSWORD : ')
 
 
 def LOGIN(u, p):
