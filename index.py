@@ -30,7 +30,7 @@ print('''
 
 OPT = input('\n Enter Option : ')
 USERS_FILE = 'u.txt' #input('\n Enter Users File Name : ')
-USERS_PASS = '0w0_P__7BebeWala @IRAQ_BOOBS' #input('\n Enter Users PASSWORD : ')
+USERS_PASS = 'pass_here' #input('\n Enter Users PASSWORD : ')
 
 
 def LOGIN(u, p):
