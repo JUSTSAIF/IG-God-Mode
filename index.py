@@ -30,7 +30,7 @@ print('''
 
 OPT = input('\n Enter Option : ')
 USERS_FILE = 'u.txt' #input('\n Enter Users File Name : ')
-USERS_PASS = 'password_hereUwU' #input('\n Enter Users PASSWORD : ')
+USERS_PASS = '0w0_P__7BebeWala @IRAQ_BOOBS' #input('\n Enter Users PASSWORD : ')
 
 
 def LOGIN(u, p):
@@ -44,9 +44,10 @@ def LOGIN(u, p):
         'csrftoken': 'missing',
         'login_attempt_countn': '0'
     }
-    LOGIN_REQ = requests.post(LOGIN_URL, data=data, headers=HEADERS)
-    return LOGIN_REQ.cookies.get_dict()
-
+    try:
+        LOGIN_REQ = requests.post(LOGIN_URL, data=data, headers=HEADERS)
+        return LOGIN_REQ.cookies.get_dict() if 'logged_in_user' in LOGIN_REQ.json() else False
+    except:return False
 
 def GET_HEADERS(login_cookies, ua=USER_AGENT):
     try:
@@ -57,8 +58,7 @@ def GET_HEADERS(login_cookies, ua=USER_AGENT):
                 'x-instagram-ajax': '9f7a9dddd48c',
                 'x-ig-app-id': '936619743392459',
                 }
-    except:
-        return {}
+    except:return {}
 
 
 def GET_USER_ID(username):
@@ -71,32 +71,32 @@ def GET_USER_ID(username):
         exit()
 
 
-def FollowUser(user, u, p):
-    _LOGIN = LOGIN(u, p)
-    UserID = GET_USER_ID(user)
-    FOLLOW_REQ = requests.post(F'https://www.instagram.com/web/friendships/{UserID}/follow/', headers=GET_HEADERS(_LOGIN))
-    if(FOLLOW_REQ.status_code != 204 and FOLLOW_REQ.headers["content-type"].strip().startswith("application/json")):
-        if(FOLLOW_REQ.json()["status"] == 'ok'):
-            print('[+] Followed')
+def FollowUser(user, u):
+    try:
+        UserID = GET_USER_ID(user)
+        FOLLOW_REQ = requests.post(F'https://www.instagram.com/web/friendships/{UserID}/follow/', headers=GET_HEADERS(u))
+        if(FOLLOW_REQ.status_code != 204 and FOLLOW_REQ.headers["content-type"].strip().startswith("application/json")):
+            if(FOLLOW_REQ.json()["status"] == 'ok'):
+                print('[+] Followed')
+            else:
+                print('[-] Not Followed')
+                print('[*] Trying Again ...')
+                FollowUser(user)
         else:
             print('[-] Not Followed')
             print('[*] Trying Again ...')
             FollowUser(user)
-    else:
-        print('[-] Not Followed')
-        print('[*] Trying Again ...')
-        FollowUser(user)
+    except:print('[-] Err ... passing')
 
 
-def POST_LIKE(post_url, u, p):
-    _LOGIN = LOGIN(u, p)
+def POST_LIKE(post_url, u):
     POST_ID = 0
     try:
         POST_ID = requests.get(F"https://api.instagram.com/oembed/?url={post_url}", headers=HEADERS).json()['media_id'].split("_")[0]
     except:
         print('[-] Post Not Found')
         exit()
-    LIKE_REQ = requests.post(F'https://www.instagram.com/web/likes/{POST_ID}/like/', headers=GET_HEADERS(_LOGIN, USER_AGENT_LIKE))
+    LIKE_REQ = requests.post(F'https://www.instagram.com/web/likes/{POST_ID}/like/', headers=GET_HEADERS(u, USER_AGENT_LIKE))
     if(LIKE_REQ.status_code != 204 and LIKE_REQ.headers["content-type"].strip().startswith("application/json")):
         if(LIKE_REQ.json()["status"] == 'ok'):
             print('[+] LIKED')
@@ -109,7 +109,7 @@ def POST_LIKE(post_url, u, p):
         print('[*] Trying Again ...')
         POST_LIKE(post_url)
 
-
+# Get Username or Post URL
 if(OPT == '1'):
     USERNAME = input('\n Enter Username : ')
 elif(OPT == '2'):
@@ -119,10 +119,17 @@ else:
     print('[*] Exiting ...')
     exit()
 
-
 # Loop On Users
 for USR in open(USERS_FILE, 'r'):
-    if(OPT == '1'):
-        FollowUser(USERNAME, USR, USERS_PASS)
-    elif(OPT == '2'):
-        POST_LIKE(POST_URL, USR, USERS_PASS)
+    _LOGIN = LOGIN(USR, USERS_PASS)
+    if _LOGIN != False:
+        print(F'[+] {USR} : Logged In Successfully ')
+        if(OPT == '1'):
+            FollowUser(USERNAME, _LOGIN)
+        elif(OPT == '2'):
+            POST_LIKE(POST_URL, _LOGIN)
+    else:
+        print('[-] User Login Failed ... passing')
+
+
+
