@@ -123,6 +123,3 @@ for USR in open(USERS_FILE, 'r'):
         FollowUser(USERNAME, USR, USERS_PASS)
     elif(OPT == '2'):
         POST_LIKE(POST_URL, USR, USERS_PASS)
-    else:
-        print('[-] Invalid Option ... passing')
-        pass
