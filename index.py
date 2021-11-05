@@ -71,8 +71,14 @@ def GET_USER_ID(username):
 def FollowUser(user, u, p):
     _LOGIN = LOGIN(u, p)
     UserID = GET_USER_ID(user)
-    if(requests.post(F'https://www.instagram.com/web/friendships/{UserID}/follow/', headers=GET_HEADERS(_LOGIN)).status_code == 200):
-        print('[+] Followed')
+    FOLLOW_REQ = requests.post(F'https://www.instagram.com/web/friendships/{UserID}/follow/', headers=GET_HEADERS(_LOGIN))
+    if(FOLLOW_REQ.status_code != 204 and FOLLOW_REQ.headers["content-type"].strip().startswith("application/json")):
+        if(FOLLOW_REQ.json()["status"] == 'ok'):
+            print('[+] Followed')
+        else:
+            print('[-] Not Followed')
+            print('[*] Trying Again ...')
+            FollowUser(user)
     else:
         print('[-] Not Followed')
         print('[*] Trying Again ...')
@@ -103,10 +109,8 @@ def POST_LIKE(post_url, u, p):
 
 if(OPT == '1'):
     USERNAME = input('\n Enter Username : ')
-    FollowUser(USERNAME)
 elif(OPT == '2'):
     POST_URL = input('\n Enter POST URL : ')
-    POST_LIKE(POST_URL)
 else:
     print('[-] Invalid Option')
     print('[*] Exiting ...')
