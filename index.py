@@ -1,4 +1,4 @@
-# Coded By SAIF
+# Coded By SAIF | INSTAGRAM: @qq_iq | Github: @JUSTSAIF
 import requests
 from uuid import uuid4
 UID = str(uuid4())
@@ -10,6 +10,9 @@ USER_AGENT_LIKE = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 
 HEADERS = {'User-Agent': USER_AGENT}
 USERNAME = ''
 POST_URL = ''
+
+
+
 print('''
      _____  _____             _          __  __             _
     |_   _|/ ____|           | |        |  \/  |           | |
