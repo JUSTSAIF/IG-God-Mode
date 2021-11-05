@@ -1,4 +1,4 @@
-from io import DEFAULT_BUFFER_SIZE
+# Coded By SAIF
 import requests
 from uuid import uuid4
 UID = str(uuid4())
@@ -8,7 +8,8 @@ DEFAULT_URL = "https://discord.gg/tFdgRrq344"
 USER_AGENT = 'Instagram 113.0.0.39.122 Android (24/5.0; 515dpi; 1440x2416; huawei/google; Nexus 6P; angler; angler; en_US)'
 USER_AGENT_LIKE = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36"
 HEADERS = {'User-Agent': USER_AGENT}
-
+USERNAME = ''
+POST_URL = ''
 print('''
      _____  _____             _          __  __             _
     |_   _|/ ____|           | |        |  \/  |           | |
@@ -25,14 +26,16 @@ print('''
 ''')
 
 OPT = input('\n Enter Option : ')
+USERS_FILE = input('\n Enter Users File Name : ')
+USERS_PASS = input('\n Enter Users PASSWORD : ')
 
 
-def LOGIN():
+def LOGIN(u, p):
     LOGIN_URL = 'https://b.i.instagram.com/api/v1/accounts/login/'
     data = {
         'uuid': UID,
-        'username': 'bwtrykh.krr',
-        'password': '07704856654',
+        'username': u,
+        'password': p,
         'device_id': UID,
         'from_reg': 'false',
         'csrftoken': 'missing',
@@ -51,7 +54,8 @@ def GET_HEADERS(login_cookies, ua=USER_AGENT):
                 'x-instagram-ajax': '9f7a9dddd48c',
                 'x-ig-app-id': '936619743392459',
                 }
-    except:return {}
+    except:
+        return {}
 
 
 def GET_USER_ID(username):
@@ -64,8 +68,8 @@ def GET_USER_ID(username):
         exit()
 
 
-def FollowUser(user):
-    _LOGIN = LOGIN()
+def FollowUser(user, u, p):
+    _LOGIN = LOGIN(u, p)
     UserID = GET_USER_ID(user)
     if(requests.post(F'https://www.instagram.com/web/friendships/{UserID}/follow/', headers=GET_HEADERS(_LOGIN)).status_code == 200):
         print('[+] Followed')
@@ -75,12 +79,11 @@ def FollowUser(user):
         FollowUser(user)
 
 
-def POST_LIKE(post_url):
-    _LOGIN = LOGIN()
+def POST_LIKE(post_url, u, p):
+    _LOGIN = LOGIN(u, p)
     POST_ID = 0
     try:
-        POST_ID = requests.get(
-            F"https://api.instagram.com/oembed/?url={post_url}", headers=HEADERS).json()['media_id'].split("_")[0]
+        POST_ID = requests.get(F"https://api.instagram.com/oembed/?url={post_url}", headers=HEADERS).json()['media_id'].split("_")[0]
     except:
         print('[-] Post Not Found')
         exit()
@@ -93,12 +96,11 @@ def POST_LIKE(post_url):
             print('[*] Trying Again ...')
             POST_LIKE(post_url)
     else:
-        print('[-] Not Liked') 
+        print('[-] Not Liked')
         print('[*] Trying Again ...')
         POST_LIKE(post_url)
 
 
-# Run Options :
 if(OPT == '1'):
     USERNAME = input('\n Enter Username : ')
     FollowUser(USERNAME)
@@ -110,3 +112,13 @@ else:
     print('[*] Exiting ...')
     exit()
 
+
+# Loop On Users
+for USR in open(USERS_FILE, 'r'):
+    if(OPT == '1'):
+        FollowUser(USERNAME, USR, USERS_PASS)
+    elif(OPT == '2'):
+        POST_LIKE(POST_URL, USR, USERS_PASS)
+    else:
+        print('[-] Invalid Option ... passing')
+        pass
