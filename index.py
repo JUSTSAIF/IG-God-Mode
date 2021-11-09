@@ -1,5 +1,6 @@
 # Coded By SAIF | INSTAGRAM: @qq_iq | Github: @JUSTSAIF
 import requests
+import time
 from uuid import uuid4
 UID = str(uuid4())
 DEFAULT_NAME = "Mr28"
@@ -10,8 +11,8 @@ USER_AGENT_LIKE = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 
 HEADERS = {'User-Agent': USER_AGENT}
 USERNAME = ''
 POST_URL = ''
-
-
+POST_ID = None
+COMMENT_MSG = "0w0"
 
 print('''
      _____  _____             _          __  __             _
@@ -25,12 +26,13 @@ print('''
 ========================================================================
 
  1 - Followers
- 2 - Like POST
-''')
+ 2 - POST Likes
+ 3 - POST Comments
+ ''')
 
 OPT = input('\n Enter Option : ')
 USERS_FILE = 'u.txt' #input('\n Enter Users File Name : ')
-USERS_PASS = 'pass_here' #input('\n Enter Users PASSWORD : ')
+USERS_PASS = '0w0_P__7BebeWala @IRAQ_BOOBS' #input('\n Enter Users PASSWORD : ')
 
 
 def LOGIN(u, p):
@@ -71,49 +73,60 @@ def GET_USER_ID(username):
         exit()
 
 
-def FollowUser(user, u):
+def FollowUser(u):
     try:
-        UserID = GET_USER_ID(user)
+        UserID = GET_USER_ID(USERNAME)
         FOLLOW_REQ = requests.post(F'https://www.instagram.com/web/friendships/{UserID}/follow/', headers=GET_HEADERS(u))
         if(FOLLOW_REQ.status_code != 204 and FOLLOW_REQ.headers["content-type"].strip().startswith("application/json")):
             if(FOLLOW_REQ.json()["status"] == 'ok'):
                 print('[+] Followed')
             else:
                 print('[-] Not Followed')
-                print('[*] Trying Again ...')
-                FollowUser(user)
+                # print('[*] Trying Again ...')
+                # FollowUser(USERNAME)
         else:
             print('[-] Not Followed')
-            print('[*] Trying Again ...')
-            FollowUser(user)
+            # print('[*] Trying Again ...')
+            # FollowUser(USERNAME)
     except:print('[-] Err ... passing')
 
-
-def POST_LIKE(post_url, u):
-    POST_ID = 0
-    try:
-        POST_ID = requests.get(F"https://api.instagram.com/oembed/?url={post_url}", headers=HEADERS).json()['media_id'].split("_")[0]
-    except:
-        print('[-] Post Not Found')
-        exit()
+def POST_LIKE(u):
     LIKE_REQ = requests.post(F'https://www.instagram.com/web/likes/{POST_ID}/like/', headers=GET_HEADERS(u, USER_AGENT_LIKE))
     if(LIKE_REQ.status_code != 204 and LIKE_REQ.headers["content-type"].strip().startswith("application/json")):
         if(LIKE_REQ.json()["status"] == 'ok'):
             print('[+] LIKED')
         else:
             print('[-] Not Liked')
-            print('[*] Trying Again ...')
-            POST_LIKE(post_url)
+            # print('[*] Trying Again ...')
+            # POST_LIKE(POST_URL)
     else:
-        print('[-] Not Liked')
-        print('[*] Trying Again ...')
-        POST_LIKE(post_url)
+        print('[-] Not Liked !')
+        # print('[*] Trying Again ...')
+        # POST_LIKE(POST_URL)
+    time.sleep(1)
+
+def COMMENTS(u):
+    COMMENT_URL = F"https://www.instagram.com/web/comments/{POST_ID}/add/"
+    try:
+        response = requests.post(COMMENT_URL, headers=GET_HEADERS(u, USER_AGENT_LIKE), data=f"comment_text={COMMENT_MSG}&replied_to_comment_id=".encode('utf-8'))
+        if response.status_code == 200:
+            print('[+] Done')
+        else:
+            print('[-] Error')
+    except:print('[#] ERR .')
+
 
 # Get Username or Post URL
 if(OPT == '1'):
     USERNAME = input('\n Enter Username : ')
-elif(OPT == '2'):
+elif(OPT == '2' or OPT == '3'):
     POST_URL = input('\n Enter POST URL : ')
+    if OPT == '3':COMMENT_MSG = input('\n Enter Comment Message (DEFAULT : 0w0) : ')
+    try:
+        POST_ID = requests.get(f'{POST_URL}?__a=1', headers=HEADERS).json()['graphql']['shortcode_media']['id']
+    except:
+        print('[-] Post Not Found')
+        exit()
 else:
     print('[-] Invalid Option')
     print('[*] Exiting ...')
@@ -123,13 +136,9 @@ else:
 for USR in open(USERS_FILE, 'r'):
     _LOGIN = LOGIN(USR, USERS_PASS)
     if _LOGIN != False:
-        print(F'[+] {USR} : Logged In Successfully ')
-        if(OPT == '1'):
-            FollowUser(USERNAME, _LOGIN)
-        elif(OPT == '2'):
-            POST_LIKE(POST_URL, _LOGIN)
-    else:
-        print('[-] User Login Failed ... passing')
-
-
+        print('[+] '+USR.replace('\n','')+' : Logged In Successfully ')
+        if(OPT == '1'):FollowUser(_LOGIN)
+        elif(OPT == '2'):POST_LIKE(_LOGIN)
+        elif(OPT == '3'):COMMENTS(_LOGIN)
+    else:print('[-] User Login Failed ... passing')
 
