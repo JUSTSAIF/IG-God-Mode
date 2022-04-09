@@ -13,4 +13,4 @@ INSTAGRAM TOOL
 ```
 
 
-[Screenshot](https://github.com/JUSTSAIF/IG-God-Mode/blob/master/pic.png?raw=true)
+(Screenshot)[https://github.com/JUSTSAIF/IG-God-Mode/blob/master/pic.png?raw=true]
